@@ -13,9 +13,12 @@
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 # include "LIBFT/libft.h"
+# include <unistd.h>
+# include <stdlib.h>
 
 # define BUFF_SIZE 32
-# define desc 10240
+# define DESC 10240
+# define MAX_FD 255
 
 int get_next_line(const int fd, char **line);
 
