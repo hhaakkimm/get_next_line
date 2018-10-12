@@ -12,7 +12,7 @@
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
-# include "LIBFT/libft.h"
+# include "libft/libft.h"
 # include <unistd.h>
 # include <stdlib.h>
 

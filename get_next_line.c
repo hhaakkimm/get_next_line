@@ -14,52 +14,55 @@
 
 static int		ft_read(char **str, int fd)
 {
-	int		ret;
+	int		size;
 	char	*s;
 	char	buf[BUFF_SIZE + 1];
 
-	if ((ret = read(fd, buf, BUFF_SIZE)) == -1)
+	if ((size = read(fd, buf, BUFF_SIZE)) == -1)
 		return (-1);
-	buf[ret] = '\0';
+	buf[size] = '\0';
 	s = *str;
 	*str = ft_strjoin(*str, buf);
 	if (*s != 0)
 		free(s);
-	return (ret);
+	return (size);
 }
 
 static int		ready(char **str, char **line, char *s)
 {
 	int		flag;
-	char	*join;
+	char	*new;
 
 	flag = 0;
 	if (*s == '\n')
 		flag = 1;
 	*s = 0;
 	*line = ft_strjoin("", *str);
-	if (!flag && ft_strlen(*str))
+	if (!flag)
 	{
-		*str = ft_strnew(1);
-		return (1);
+		if (!(ft_strlen(*str)))
+			return (0);
+		else
+		{
+			*str = ft_strnew(1);
+			return (1);
+		}
 	}
-	else if (!flag && !(ft_strlen(*str)))
-		return (0);
-	join = *str;
+	new = *str;
 	*str = ft_strjoin(s + 1, "");
-	free(join);
+	free(new);
 	return (flag);
 }
 
-int				get_next_line(int const fd, char **line)
+int				get_next_line(const int fd, char **line)
 {
 	int			size;
 	char		*s;
 	static char	*str;
 
-	if (str == NULL)
+	if (str == 0)
 		str = "";
-	if (!line || !fd || BUFF_SIZE <= 0)
+	if (!line || BUFF_SIZE < 1)
 		return (-1);
 	size = BUFF_SIZE;
 	while (line)
@@ -67,7 +70,7 @@ int				get_next_line(int const fd, char **line)
 		s = str;
 		while (*s || size < BUFF_SIZE)
 		{
-			if (*s == '\n' || *s == '\0')
+			if (*s == '\n' || !(*s))
 				return (ready(&str, line, s));
 			s++;
 		}
