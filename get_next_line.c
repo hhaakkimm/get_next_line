@@ -11,14 +11,17 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <fcntl.h>
+#include <stdio.h>
 
-static int		ft_read(char **str, int fd)
+static int		ft_read(int fd, char **str)
 {
 	int		size;
 	char	*s;
 	char	buf[BUFF_SIZE + 1];
 
-	if ((size = read(fd, buf, BUFF_SIZE)) == -1)
+	size = read(fd, buf, BUFF_SIZE);
+	if (size == -1)
 		return (-1);
 	buf[size] = '\0';
 	s = *str;
@@ -44,7 +47,7 @@ static int		ready(char **str, char **line, char *s)
 			return (0);
 		else
 		{
-			*str = ft_strnew(1);
+			*str = "\0";
 			return (1);
 		}
 	}
@@ -60,9 +63,9 @@ int				get_next_line(const int fd, char **line)
 	char		*s;
 	static char	*str;
 
-	if (str == 0)
+	if (!str)
 		str = "";
-	if (!line || BUFF_SIZE < 1)
+	if (!line || fd < 0 || BUFF_SIZE < 1)
 		return (-1);
 	size = BUFF_SIZE;
 	while (line)
@@ -74,9 +77,23 @@ int				get_next_line(const int fd, char **line)
 				return (ready(&str, line, s));
 			s++;
 		}
-		size = ft_read(&str, fd);
+		size = ft_read(fd, &str);
 		if (size == -1)
 			return (-1);
 	}
-	return (0);
+	return (1);
+}
+
+int main(int argc, char** argv)
+{
+	int fd;
+	char *line;
+	fd = open(argv[1], O_RDONLY);
+	if (get_next_line(fd, &line) == 1)
+	{
+		ft_putendl(line);
+		free(line);
+	}
+	if (argc == 2)
+		close(fd);
 }
