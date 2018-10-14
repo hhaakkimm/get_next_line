@@ -16,9 +16,9 @@
 
 static int		ft_read(int fd, char **str)
 {
-	int		size;
-	char	*s;
-	char	buf[BUFF_SIZE + 1];
+	int			size;
+	char		*s;
+	char		buf[BUFF_SIZE + 1];
 
 	size = read(fd, buf, BUFF_SIZE);
 	if (size == -1)
@@ -61,39 +61,25 @@ int				get_next_line(const int fd, char **line)
 {
 	int			size;
 	char		*s;
-	static char	*str;
+	static char	*str[MAX_FD];
 
-	if (!str)
-		str = "";
 	if (!line || fd < 0 || BUFF_SIZE < 1)
 		return (-1);
+	if (!str[fd])
+		str[fd] = "";
 	size = BUFF_SIZE;
 	while (line)
 	{
-		s = str;
+		s = str[fd];
 		while (*s || size < BUFF_SIZE)
 		{
 			if (*s == '\n' || !(*s))
-				return (ready(&str, line, s));
+				return (ready(&str[fd], line, s));
 			s++;
 		}
-		size = ft_read(fd, &str);
+		size = ft_read(fd, &str[fd]);
 		if (size == -1)
 			return (-1);
 	}
 	return (1);
-}
-
-int main(int argc, char** argv)
-{
-	int fd;
-	char *line;
-	fd = open(argv[1], O_RDONLY);
-	if (get_next_line(fd, &line) == 1)
-	{
-		ft_putendl(line);
-		free(line);
-	}
-	if (argc == 2)
-		close(fd);
 }
