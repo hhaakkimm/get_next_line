@@ -11,8 +11,6 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <fcntl.h>
-#include <stdio.h>
 
 static int		ft_read(int fd, char **str)
 {
@@ -20,6 +18,7 @@ static int		ft_read(int fd, char **str)
 	char		*s;
 	char		buf[BUFF_SIZE + 1];
 
+	ft_bzero(buf, BUFF_SIZE + 1);
 	size = read(fd, buf, BUFF_SIZE);
 	if (size == -1)
 		return (-1);
@@ -61,9 +60,9 @@ int				get_next_line(const int fd, char **line)
 {
 	int			size;
 	char		*s;
-	static char	*str[MAX_FD];
+	static char	*str[OPEN_MAX];
 
-	if (!line || fd < 0 || BUFF_SIZE < 1)
+	if (!line || fd < 0 || BUFF_SIZE < 1 || fd > OPEN_MAX)
 		return (-1);
 	if (!str[fd])
 		str[fd] = "";
